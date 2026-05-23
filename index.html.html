@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>รู้จักสหกรณ์กันเถอะ! 🌾</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green-dark: #0F6E56;
+      --green-mid: #1D9E75;
+      --green-light: #E1F5EE;
+      --green-text: #085041;
+      --correct-bg: #EAF3DE;
+      --correct-text: #3B6D11;
+      --correct-border: #639922;
+      --wrong-bg: #FAECE7;
+      --wrong-text: #993C1D;
+      --wrong-border: #D85A30;
+      --surface: #fff;
+      --surface2: #f6f7f4;
+      --border: rgba(0,0,0,0.1);
+      --text: #1a1a18;
+      --text-muted: #6b6b65;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'Sarabun', sans-serif;
+      background: linear-gradient(135deg, #e8f5ef 0%, #f0f9f5 50%, #e4f4ec 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2rem 1rem 4rem;
+    }
+
+    /* Decorative blobs */
+    body::before {
+      content: '';
+      position: fixed; top: -80px; right: -80px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, #9FE1CB55 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; bottom: -80px; left: -80px;
+      width: 280px; height: 280px;
+      background: radial-gradient(circle, #5DCAA533 0%, transparent 70%);
+      border-radius: 50%; pointer-events: none; z-index: 0;
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      width: 100%; max-width: 520px;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      text-align: center; margin-bottom: 1.5rem;
+    }
+    .site-header .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green-mid); color: #fff;
+      font-size: 12px; font-weight: 600;
+      padding: 5px 14px; border-radius: 999px;
+      letter-spacing: 0.05em; margin-bottom: 0.6rem;
+    }
+    .site-header h1 {
+      font-size: 1.15rem; color: var(--green-dark);
+      font-weight: 600; letter-spacing: 0.02em;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+      padding: 1.75rem 1.5rem;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCREENS ── */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    /* ── START ── */
+    #start-screen { text-align: center; }
+    .start-icon {
+      font-size: 3.5rem; margin-bottom: 0.75rem;
+      display: block; animation: bounce 1.8s infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-10px); }
+    }
+    #start-screen h2 {
+      font-size: 1.6rem; font-weight: 700;
+      color: var(--text); line-height: 1.3;
+      margin-bottom: 0.4rem;
+    }
+    #start-screen p {
+      font-size: 14px; color: var(--text-muted);
+      margin-bottom: 1.5rem; line-height: 1.6;
+    }
+    .info-pills {
+      display: flex; justify-content: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 1.75rem;
+    }
+    .pill {
+      background: var(--green-light); color: var(--green-dark);
+      font-size: 12px; font-weight: 600;
+      padding: 5px 12px; border-radius: 999px;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--green-mid); color: #fff;
+      border: none; padding: 14px 48px;
+      border-radius: var(--radius); font-family: 'Sarabun', sans-serif;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
+      box-shadow: 0 4px 16px rgba(29,158,117,0.3);
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ── PROGRESS ── */
+    .progress-wrap {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+    .progress-bg {
+      flex: 1; height: 8px;
+      background: var(--surface2);
+      border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--green-mid);
+      border-radius: 999px;
+      transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    }
+    .progress-txt {
+      font-size: 13px; font-weight: 600;
+      color: var(--green-dark); white-space: nowrap;
+    }
+
+    /* ── QUESTION CARD ── */
+    .q-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.9rem; }
+    .q-badge {
+      background: var(--green-light); color: var(--green-dark);
+      font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 999px;
+      letter-spacing: 0.04em;
+    }
+    .q-num { font-size: 12px; color: var(--text-muted); margin-left: auto; }
+    .q-text {
+      font-size: 16px; font-weight: 600;
+      color: var(--text); line-height: 1.55;
+      margin-bottom: 1rem;
+    }
+
+    /* ── MATCH ── */
+    .match-area { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .match-col-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--text-muted); letter-spacing: 0.06em;
+      margin-bottom: 6px; text-transform: uppercase;
+    }
+    .match-col { display: flex; flex-direction: column; gap: 7px; }
+    .match-item {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 13.5px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      color: var(--text);
+      min-height: 48px; display: flex; align-items: center;
+      line-height: 1.4;
+    }
+    .match-item:hover:not(.matched-ok):not(.disabled) {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+    }
+    .match-item.selected {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+    .match-item.matched-ok {
+      border-color: var(--correct-border);
+      background: var(--correct-bg);
+      color: var(--correct-text);
+      cursor: default;
+    }
+    .match-item.matched-err {
+      border-color: var(--wrong-border);
+      background: var(--wrong-bg);
+      color: var(--wrong-text);
+    }
+    .match-item.disabled { cursor: default; opacity: 0.5; }
+
+    /* ── MCQ ── */
+    .mcq-options { display: flex; flex-direction: column; gap: 8px; }
+    .mcq-btn {
+      background: var(--surface2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 13px 14px;
+      font-family: 'Sarabun', sans-serif;
+      font-size: 14px; font-weight: 500;
+      color: var(--text);
+      cursor: pointer; text-align: left;
+      transition: all 0.15s; line-height: 1.4;
+    }
+    .mcq-btn:hover:not(:disabled) {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+      color: var(--green-dark);
+    }
+    .mcq-btn.correct { border-color: var(--correct-border); background: var(--correct-bg); color: var(--correct-text); }
+    .mcq-btn.wrong   { border-color: var(--wrong-border);   background: var(--wrong-bg);   color: var(--wrong-text); }
+    .mcq-btn:disabled { cursor: default; }
+
+    /* ── TRUE/FALSE ── */
+    .tf-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .tf-btn {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 20px 8px;
+      text-align: center; cursor: pointer;
+      background: var(--surface2);
+      transition: all 0.15s;
+      font-family: 'Sarabun', sans-serif;
+      color: var(--text);
+    }
+    .tf-icon { font-size: 2rem; display: block; }
+    .tf-label { font-size: 14px; font-weight: 600; margin-top: 6px; display: block; }
+    .tf-btn:hover:not(:disabled) {
+      border-color: var(--green-mid);
+      background: var(--green-light);
+    }
+    .tf-btn.correct { border-color: var(--correct-border); background: var(--correct-bg); }
+    .tf-btn.wrong   { border-color: var(--wrong-border);   background: var(--wrong-bg); }
+    .tf-btn:disabled { cursor: default; }
+
+    /* ── FEEDBACK ── */
+    .feedback {
+      display: none; margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 14px; font-weight: 500;
+      line-height: 1.6;
+    }
+    .feedback.show { display: block; animation: fadeUp 0.2s ease; }
+    .feedback.ok  { background: var(--correct-bg); color: var(--correct-text); border-left: 4px solid var(--correct-border); }
+    .feedback.err { background: var(--wrong-bg);   color: var(--wrong-text);   border-left: 4px solid var(--wrong-border); }
+
+    /* ── NEXT ── */
+    .next-btn {
+      display: none; width: 100%;
+      background: var(--green-mid); color: #fff;
+      border: none; padding: 13px;
+      border-radius: var(--radius-sm);
+      font-family: 'Sarabun', sans-serif;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer; margin-top: 12px;
+      transition: background 0.15s;
+    }
+    .next-btn:hover { background: var(--green-dark); }
+    .next-btn.show { display: block; animation: fadeUp 0.2s ease; }
+
+    /* ── END ── */
+    #end-screen { text-align: center; }
+    .score-ring {
+      width: 120px; height: 120px;
+      border-radius: 50%;
+      background: var(--green-light);
+      border: 4px solid var(--green-mid);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 0 0 8px rgba(29,158,117,0.1);
+    }
+    .score-num { font-size: 2.4rem; font-weight: 700; color: var(--green-dark); line-height: 1; }
+    .score-denom { font-size: 14px; color: var(--green-mid); font-weight: 600; }
+    #end-screen h2 { font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem; }
+    #end-screen p { font-size: 14px; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    .footer {
+      text-align: center; margin-top: 1.25rem;
+      font-size: 12px; color: var(--green-dark);
+      opacity: 0.6;
+    }
+
+    @media (max-width: 420px) {
+      body { padding: 1rem 0.75rem 3rem; }
+      .card { padding: 1.25rem 1.1rem; }
+      .match-item { font-size: 12.5px; padding: 8px 10px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site-header">
+    <div class="badge">🌾 กิจกรรมรับน้องสหกรณ์ปี 1</div>
+    <h1>เกมความรู้สหกรณ์</h1>
+  </header>
+
+  <div class="card">
+
+    <!-- START -->
+    <div id="start-screen" class="screen active">
+      <span class="start-icon">🤝</span>
+      <h2>รู้จักสหกรณ์<br>กันเถอะ!</h2>
+      <p>ทดสอบความรู้เรื่องสหกรณ์<br>ผ่านเกมสนุกๆ ง่ายๆ</p>
+      <div class="info-pills">
+        <span class="pill">📝 6 ข้อ</span>
+        <span class="pill">🔗 จับคู่</span>
+        <span class="pill">❓ ตอบคำถาม</span>
+        <span class="pill">✅ ถูก/ผิด</span>
+      </div>
+      <button class="btn-primary" onclick="startGame()">เริ่มเลย! →</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz-screen" class="screen">
+      <div class="progress-wrap">
+        <div class="progress-bg"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <span class="progress-txt" id="prog-label">0 / 6</span>
+      </div>
+
+      <div class="q-header">
+        <span class="q-badge" id="q-badge">จับคู่</span>
+        <span class="q-num" id="q-num">ข้อที่ 1</span>
+      </div>
+      <p class="q-text" id="q-text"></p>
+      <div id="q-body"></div>
+
+      <div class="feedback" id="feedback"></div>
+      <button class="next-btn" id="next-btn" onclick="nextQ()">ข้อถัดไป →</button>
+    </div>
+
+    <!-- END -->
+    <div id="end-screen" class="screen">
+      <div class="score-ring">
+        <span class="score-num" id="score-num">0</span>
+        <span class="score-denom">/ 6</span>
+      </div>
+      <h2 id="end-title"></h2>
+      <p id="end-msg"></p>
+      <button class="btn-primary" onclick="startGame()">เล่นอีกครั้ง ↺</button>
+    </div>
+
+  </div><!-- /.card -->
+
+  <p class="footer">🌾 สหกรณ์ร่วมใจ · ปี 1</p>
+</div>
+
+<script>
+const questions = [
+  {
+    type: 'match',
+    badge: 'จับคู่',
+    text: 'จับคู่ประเภทสหกรณ์ กับ ตัวอย่างที่ถูกต้อง',
+    left:  ['สหกรณ์การเกษตร', 'สหกรณ์ออมทรัพย์', 'สหกรณ์ร้านค้า'],
+    right: ['ชาวนาร่วมกันซื้อปุ๋ย', 'พนักงานออมเงินร่วมกัน', 'สมาชิกซื้อสินค้าราคาถูก'],
+    pairs: {0:0, 1:1, 2:2},
+  },
+  {
+    type: 'mcq',
+    badge: 'ตอบคำถาม',
+    text: '"หลักการสหกรณ์" ข้อใดถูกต้องที่สุด?',
+    options: [
+      'ผู้ถือหุ้นรายใหญ่มีอำนาจสูงสุด',
+      'สมาชิกทุกคนมีสิทธิ์ออกเสียงเท่าเทียมกัน (1 คน 1 เสียง)',
+      'กำไรทั้งหมดนำไปจ่ายเงินปันผล',
+      'ไม่สามารถรับสมาชิกใหม่ได้',
+    ],
+    answer: 1,
+    explain: 'หลักการสหกรณ์สากล: สมาชิกทุกคนมีสิทธิ์ออกเสียงเท่าเทียมกัน ไม่ว่าจะถือหุ้นมากหรือน้อย',
+  },
+  {
+    type: 'tf',
+    badge: 'ถูก/ผิด',
+    text: '"สหกรณ์" ก่อตั้งขึ้นเพื่อแสวงหากำไรสูงสุดให้ผู้ถือหุ้นเป็นหลัก',
+    answer: false,
+    explain: 'ผิด! สหกรณ์ก่อตั้งขึ้นเพื่อช่วยเหลือซึ่งกันและกัน (mutual aid) ระหว่างสมาชิก ไม่ใช่เพื่อกำไรสูงสุด',
+  },
+  {
+    type: 'match',
+    badge: 'จับคู่',
+    text: 'จับคู่คำศัพท์สหกรณ์ กับ ความหมายที่ถูกต้อง',
+    left:  ['เงินปันผล', 'เงินเฉลี่ยคืน', 'ทุนสำรอง'],
+    right: ['ผลตอบแทนตามสัดส่วนที่ใช้บริการ', 'เงินกันสำหรับฉุกเฉินของสหกรณ์', 'ผลตอบแทนตามสัดส่วนหุ้น'],
+    pairs: {0:2, 1:0, 2:1},
+  },
+  {
+    type: 'mcq',
+    badge: 'ตอบคำถาม',
+    text: 'สหกรณ์แห่งแรกในโลกก่อตั้งที่เมืองใด?',
+    options: [
+      'ลอนดอน ประเทศอังกฤษ',
+      'ร็อคเดล ประเทศอังกฤษ',
+      'ปารีส ประเทศฝรั่งเศส',
+      'เบอร์ลิน ประเทศเยอรมนี',
+    ],
+    answer: 1,
+    explain: 'สหกรณ์ร็อคเดล (Rochdale Pioneers) ก่อตั้งปี ค.ศ. 1844 ที่เมืองร็อคเดล อังกฤษ เป็นต้นแบบสหกรณ์สมัยใหม่',
+  },
+  {
+    type: 'tf',
+    badge: 'ถูก/ผิด',
+    text: 'สมาชิกสหกรณ์สามารถลาออกได้โดยสมัครใจ (สมาชิกภาพเปิด)',
+    answer: true,
+    explain: 'ถูก! หลักการที่ 1 ของสหกรณ์สากลคือ "สมาชิกภาพโดยสมัครใจและเปิดกว้าง" ทุกคนเข้าและออกได้โดยสมัครใจ',
+  },
+];
+
+let current = 0, score = 0;
+let matchState = {};
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function startGame() {
+  current = 0; score = 0;
+  show('quiz-screen');
+  renderQ();
+}
+
+function updateProgress() {
+  const pct = (current / questions.length) * 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = current + ' / ' + questions.length;
+}
+
+function renderQ() {
+  updateProgress();
+  const q = questions[current];
+  document.getElementById('q-badge').textContent = q.badge;
+  document.getElementById('q-num').textContent = 'ข้อที่ ' + (current + 1);
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').className = 'next-btn';
+  const body = document.getElementById('q-body');
+  body.innerHTML = '';
+  if (q.type === 'match') renderMatch(q, body);
+  else if (q.type === 'mcq') renderMcq(q, body);
+  else if (q.type === 'tf') renderTf(q, body);
+}
+
+/* MATCH */
+function renderMatch(q, body) {
+  matchState = { selected: null, side: null, matched: {}, score: 0, done: false };
+  const area = document.createElement('div');
+  area.className = 'match-area';
+
+  const leftCol = document.createElement('div');
+  leftCol.className = 'match-col';
+  const ll = document.createElement('div');
+  ll.className = 'match-col-label'; ll.textContent = 'ประเภท / คำ';
+  leftCol.appendChild(ll);
+
+  const rightCol = document.createElement('div');
+  rightCol.className = 'match-col';
+  const rl = document.createElement('div');
+  rl.className = 'match-col-label'; rl.textContent = 'ความหมาย';
+  rightCol.appendChild(rl);
+
+  q.left.forEach((text, i) => {
+    const el = document.createElement('div');
+    el.className = 'match-item'; el.textContent = text;
+    el.id = 'left-' + i;
+    el.onclick = () => selectLeft(i, el, q);
+    leftCol.appendChild(el);
+  });
+
+  q.right.forEach((text, ri) => {
+    const el = document.createElement('div');
+    el.className = 'match-item'; el.textContent = text;
+    el.id = 'right-' + ri;
+    el.onclick = () => selectRight(ri, el, q);
+    rightCol.appendChild(el);
+  });
+
+  area.appendChild(leftCol);
+  area.appendChild(rightCol);
+  body.appendChild(area);
+}
+
+function selectLeft(idx, el, q) {
+  if (matchState.done || el.classList.contains('matched-ok')) return;
+  document.querySelectorAll('[id^="left-"]').forEach(e => {
+    if (!e.classList.contains('matched-ok')) e.classList.remove('selected');
+  });
+  matchState.selected = idx; matchState.side = 'left';
+  el.classList.add('selected');
+}
+
+function selectRight(idx, el, q) {
+  if (matchState.done || el.classList.contains('matched-ok')) return;
+  if (matchState.side !== 'left' || matchState.selected === null) return;
+  const li = matchState.selected;
+  const leftEl = document.getElementById('left-' + li);
+  leftEl.classList.remove('selected');
+  if (q.pairs[li] === idx) {
+    leftEl.classList.add('matched-ok');
+    el.classList.add('matched-ok');
+    matchState.score++;
+    matchState.matched[li] = idx;
+  } else {
+    leftEl.classList.add('matched-err');
+    el.classList.add('matched-err');
+    setTimeout(() => {
+      leftEl.classList.remove('matched-err');
+      el.classList.remove('matched-err');
+    }, 700);
+  }
+  matchState.selected = null; matchState.side = null;
+  if (Object.keys(matchState.matched).length === q.left.length) {
+    matchState.done = true;
+    const ok = matchState.score === q.left.length;
+    if (ok) score++;
+    showFeedback(ok, ok ? '🎉 จับคู่ถูกหมดเลย!' : 'ยังไม่ถูกทั้งหมด ลองสังเกตความต่างนะ');
+  }
+}
+
+/* MCQ */
+function renderMcq(q, body) {
+  const wrap = document.createElement('div');
+  wrap.className = 'mcq-options';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'mcq-btn'; btn.textContent = opt;
+    btn.onclick = () => {
+      document.querySelectorAll('.mcq-btn').forEach(b => b.disabled = true);
+      const ok = i === q.answer;
+      btn.classList.add(ok ? 'correct' : 'wrong');
+      if (!ok) document.querySelectorAll('.mcq-btn')[q.answer].classList.add('correct');
+      if (ok) score++;
+      showFeedback(ok, q.explain);
+    };
+    wrap.appendChild(btn);
+  });
+  body.appendChild(wrap);
+}
+
+/* TRUE/FALSE */
+function renderTf(q, body) {
+  const wrap = document.createElement('div');
+  wrap.className = 'tf-options';
+  [{ icon: '✅', label: 'ถูก', val: true }, { icon: '❌', label: 'ผิด', val: false }].forEach(o => {
+    const btn = document.createElement('button');
+    btn.className = 'tf-btn';
+    btn.innerHTML = '<span class="tf-icon">' + o.icon + '</span><span class="tf-label">' + o.label + '</span>';
+    btn.onclick = () => {
+      document.querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+      const ok = o.val === q.answer;
+      btn.classList.add(ok ? 'correct' : 'wrong');
+      if (ok) score++;
+      showFeedback(ok, q.explain);
+    };
+    wrap.appendChild(btn);
+  });
+  body.appendChild(wrap);
+}
+
+function showFeedback(ok, msg) {
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (ok ? 'ok' : 'err');
+  fb.textContent = (ok ? '✓ ' : '✗ ') + msg;
+  const nb = document.getElementById('next-btn');
+  nb.className = 'next-btn show';
+  nb.textContent = current < questions.length - 1 ? 'ข้อถัดไป →' : 'ดูผลคะแนน 🏆';
+}
+
+function nextQ() {
+  current++;
+  if (current >= questions.length) { endGame(); return; }
+  renderQ();
+}
+
+function endGame() {
+  document.getElementById('score-num').textContent = score;
+  const pct = score / questions.length;
+  let title, msg;
+  if (pct === 1)      { title = '🏆 เยี่ยมมาก! เต็ม 6/6!'; msg = 'คุณเป็นผู้เชี่ยวชาญด้านสหกรณ์แล้ว!'; }
+  else if (pct >= .67){ title = '👍 ดีมาก!'; msg = 'คุณเข้าใจหลักการสหกรณ์ได้ดี ลองทบทวนข้อที่ผิดอีกครั้งนะ'; }
+  else if (pct >= .5) { title = '😊 พอใช้!'; msg = 'ยังมีบางส่วนที่ต้องทบทวน ลองเล่นอีกครั้งนะ!'; }
+  else                { title = '💪 สู้ต่อไป!'; msg = 'อย่าท้อ! ลองเล่นอีกรอบแล้วจะเข้าใจมากขึ้นเอง'; }
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-msg').textContent = msg;
+  show('end-screen');
+}
+</script>
+</body>
+</html>
